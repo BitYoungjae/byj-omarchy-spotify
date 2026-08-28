@@ -234,7 +234,7 @@ BarWidget {
           Item {
             anchors.fill: parent
             anchors.margins: artFrame.borderTop
-            visible: root.artUrl !== ""
+            visible: root.artUrl !== "" && popup.visible
             layer.enabled: true
             layer.smooth: true
             layer.effect: MultiEffect {
@@ -246,7 +246,11 @@ BarWidget {
 
             Image {
               anchors.fill: parent
-              source: root.artUrl
+              // Spotify serves art over HTTPS, and Qt fetches it on the pixmap
+              // reader thread. Only ask for it while the card is actually on
+              // screen (open, or still fading out) so a closed panel does no
+              // network work on every track change.
+              source: popup.visible ? root.artUrl : ""
               fillMode: Image.PreserveAspectCrop
               asynchronous: true
               cache: true
