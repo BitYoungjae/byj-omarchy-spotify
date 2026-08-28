@@ -16,7 +16,7 @@
     "description": "Spotify icon that lights up while playing; click for album art, seek bar, and playback controls",
     "category": "Media",
     "allowMultiple": false,
-    "defaultSection": "center",
+    "defaultSection": "right",
     "defaults": {
       "accentColor": "theme",
       "albumArtSize": 84,
