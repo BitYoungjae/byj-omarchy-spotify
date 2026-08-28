@@ -5,6 +5,8 @@ shows a single Spotify glyph that dims while Spotify is closed and lights up in
 the theme accent color while it is playing. Clicking it opens a flyout panel with
 album art, track info, a seek bar, and transport controls.
 
+![The bar glyph and the flyout panel: play/pause, seek, and skip](docs/demo.gif)
+
 Inspired by [garak](https://github.com/BitYoungjae/garak), rewritten as a native
 `omarchy-shell` plugin so it lives inside the running shell instead of spawning a
 separate process.
