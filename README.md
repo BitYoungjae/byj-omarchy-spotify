@@ -13,7 +13,7 @@ separate process.
 
 - Omarchy 4 (`omarchy-shell`)
 - A Nerd Font for the bar glyphs (Omarchy ships one by default)
-- Spotify — `omarchy-launch-spotify` installs it on first click if missing
+- Spotify, and `uwsm-app` to start it (both standard on Omarchy)
 
 ## Install
 
@@ -38,7 +38,7 @@ Move it around the bar with `omarchy bar move byj.spotify --section right`.
 | --- | --- |
 | Left click | Open the flyout panel — or launch Spotify when it is closed |
 | Right click | Play / pause |
-| Middle click | Launch or focus the Spotify window |
+| Middle click | Focus the Spotify window, or start it when closed |
 | Scroll up / down | Previous / next track |
 | Click the album art | Focus the Spotify window |
 
@@ -71,7 +71,7 @@ Settings are inline on the widget's entry in `~/.config/omarchy/shell.json`:
 | `accentColor` | `"theme"` | `"theme"` follows `Color.accent`, `"spotify"` pins `#1DB954`, or pass a `#RRGGBB` hex |
 | `albumArtSize` | `84` | Album art edge length, in unscaled pixels |
 | `panelWidth` | `340` | Flyout panel width, in unscaled pixels |
-| `launchCommand` | `"omarchy-launch-spotify"` | Command run to launch or focus Spotify |
+| `launchCommand` | `"uwsm-app -- spotify"` | Command run to start Spotify when it is closed. A running Spotify is focused over MPRIS `Raise()` instead, so this is only the cold-start path |
 | `hideWhenClosed` | `false` | Remove the widget from the bar while Spotify is closed, instead of dimming it |
 
 Sizes are unscaled: the shell multiplies them by `[spacing] scale` and the font
@@ -89,7 +89,7 @@ omarchy-shell byj.spotify close
 omarchy-shell byj.spotify playPause
 omarchy-shell byj.spotify next
 omarchy-shell byj.spotify previous
-omarchy-shell byj.spotify launch       # launch or focus Spotify
+omarchy-shell byj.spotify launch       # focus Spotify, or start it when closed
 omarchy-shell byj.spotify status       # JSON: running, playing, track, position
 ```
 

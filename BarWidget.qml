@@ -15,7 +15,12 @@ BarWidget {
   moduleName: "byj.spotify"
 
   // ------------------------------------------------------------- settings
-  readonly property string launchCommand: String(setting("launchCommand", "omarchy-launch-spotify"))
+  // Deliberately not omarchy-launch-spotify: that script also matches on
+  // window *title*, so any window mentioning Spotify — a terminal in a
+  // spotify-named directory, a browser tab — is treated as a running Spotify
+  // and merely focused. We already know from MPRIS whether Spotify is up, and
+  // raise() focuses the real window without guessing.
+  readonly property string launchCommand: String(setting("launchCommand", "uwsm-app -- spotify"))
   readonly property string accentSetting: String(setting("accentColor", "theme"))
   readonly property int panelWidth: Number(setting("panelWidth", 340))
   readonly property int albumArtSize: Number(setting("albumArtSize", 84))
@@ -93,7 +98,11 @@ BarWidget {
 
   function nextTrack() { if (running && player.canGoNext) player.next() }
   function previousTrack() { if (running && player.canGoPrevious) player.previous() }
-  function launch() { if (bar) bar.run(launchCommand) }
+  // Focus the running player over MPRIS when it is there; otherwise start it.
+  function launch() {
+    if (running && player.canRaise) player.raise()
+    else if (bar) bar.run(launchCommand)
+  }
 
   function formatTime(seconds) {
     var total = Math.max(0, Math.floor(Number(seconds) || 0))

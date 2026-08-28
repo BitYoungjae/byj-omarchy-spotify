@@ -21,7 +21,7 @@
       "accentColor": "theme",
       "albumArtSize": 84,
       "panelWidth": 340,
-      "launchCommand": "omarchy-launch-spotify",
+      "launchCommand": "uwsm-app -- spotify",
       "hideWhenClosed": false
     },
     "schema": [
@@ -50,8 +50,8 @@
         "key": "launchCommand",
         "type": "string",
         "label": "Launch command",
-        "description": "Command run to launch or focus Spotify.",
-        "defaultValue": "omarchy-launch-spotify"
+        "description": "Command run to start Spotify when it is not running. A running Spotify is focused over MPRIS instead.",
+        "defaultValue": "uwsm-app -- spotify"
       },
       {
         "key": "hideWhenClosed",
