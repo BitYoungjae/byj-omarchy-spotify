@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "byj.spotify",
+  "name": "Spotify",
+  "version": "1.0.0",
+  "author": "bityoungjae",
+  "description": "Spotify-only now-playing bar widget with a garak-style flyout panel",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Spotify",
+    "description": "Spotify icon that lights up while playing; click for album art, seek bar, and playback controls",
+    "category": "Media",
+    "allowMultiple": false,
+    "defaultSection": "center",
+    "defaults": {
+      "accentColor": "theme",
+      "albumArtSize": 84,
+      "panelWidth": 340,
+      "launchCommand": "omarchy-launch-spotify",
+      "hideWhenClosed": false
+    },
+    "schema": [
+      {
+        "key": "accentColor",
+        "type": "string",
+        "label": "Accent color",
+        "description": "Color of the bar icon while Spotify is playing. \"theme\" uses the theme accent, \"spotify\" uses Spotify green, or pass a #RRGGBB hex.",
+        "defaultValue": "theme"
+      },
+      {
+        "key": "albumArtSize",
+        "type": "number",
+        "label": "Album art size",
+        "description": "Album art edge length in unscaled pixels.",
+        "defaultValue": 84
+      },
+      {
+        "key": "panelWidth",
+        "type": "number",
+        "label": "Panel width",
+        "description": "Flyout panel width in unscaled pixels.",
+        "defaultValue": 340
+      },
+      {
+        "key": "launchCommand",
+        "type": "string",
+        "label": "Launch command",
+        "description": "Command run to launch or focus Spotify.",
+        "defaultValue": "omarchy-launch-spotify"
+      },
+      {
+        "key": "hideWhenClosed",
+        "type": "boolean",
+        "label": "Hide when Spotify is closed",
+        "description": "Remove the widget from the bar entirely while Spotify is not running, instead of dimming it.",
+        "defaultValue": false
+      }
+    ]
+  }
+}
