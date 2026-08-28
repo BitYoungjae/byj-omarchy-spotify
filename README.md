@@ -5,7 +5,7 @@ shows a single Spotify glyph that dims while Spotify is closed and lights up in
 the theme accent color while it is playing. Clicking it opens a flyout panel with
 album art, track info, a seek bar, and transport controls.
 
-Inspired by [garak](https://github.com/bityoungjae/garak), rewritten as a native
+Inspired by [garak](https://github.com/BitYoungjae/garak), rewritten as a native
 `omarchy-shell` plugin so it lives inside the running shell instead of spawning a
 separate process.
 
@@ -18,13 +18,13 @@ separate process.
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/bityoungjae/byj-omarchy-spotify.git --enable
+omarchy plugin add https://github.com/BitYoungjae/byj-omarchy-spotify.git --enable
 ```
 
 Or by hand:
 
 ```bash
-git clone https://github.com/bityoungjae/byj-omarchy-spotify.git \
+git clone https://github.com/BitYoungjae/byj-omarchy-spotify.git \
   ~/.config/omarchy/plugins/byj.spotify
 omarchy-shell shell rescanPlugins
 omarchy plugin enable byj.spotify
