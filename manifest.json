@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "Spotify",
-    "description": "Spotify icon that lights up while playing; click for album art, seek bar, and playback controls",
+    "description": "Spotify icon that lights up while playing; click for album art, seek bar, playback controls, and shuffle / repeat toggles",
     "category": "Media",
     "allowMultiple": false,
     "defaultSection": "right",

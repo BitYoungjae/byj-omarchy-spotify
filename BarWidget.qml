@@ -9,7 +9,8 @@ import qs.Commons
 // Spotify-only bar widget. The bar shows one glyph that dims while Spotify is
 // closed, sits at the normal bar foreground while it is paused, and switches to
 // the accent color while it is playing. Left click opens a garak-style flyout
-// with album art, track info, a seek bar, and transport controls.
+// with album art, track info, a seek bar, transport controls, and shuffle /
+// repeat toggles.
 BarWidget {
   id: root
   moduleName: "byj.spotify"
@@ -69,6 +70,14 @@ BarWidget {
   readonly property real trackPosition: running && player.positionSupported ? Math.max(0, player.position) : 0
   readonly property bool canSeek: running && player.canSeek && player.positionSupported && trackLength > 0
 
+  // Shuffle and repeat ride the same MPRIS properties Spotify's own buttons
+  // flip, and Spotify emits PropertiesChanged for both, so these bindings track
+  // the app without polling.
+  readonly property bool shuffleSupported: running && player.shuffleSupported
+  readonly property bool shuffle: shuffleSupported && player.shuffle
+  readonly property bool loopSupported: running && player.loopSupported
+  readonly property int loopState: loopSupported ? player.loopState : MprisLoopState.None
+
   property bool popupOpen: false
 
   // PopupCard's focus grab and the bar's one-popup-at-a-time coordinator both
@@ -98,6 +107,22 @@ BarWidget {
 
   function nextTrack() { if (running && player.canGoNext) player.next() }
   function previousTrack() { if (running && player.canGoPrevious) player.previous() }
+  function toggleShuffle() { if (shuffleSupported) player.shuffle = !player.shuffle }
+
+  // Same cycle as Spotify's own repeat button: off → all → one → off.
+  function cycleLoop() {
+    if (!loopSupported) return
+    if (player.loopState === MprisLoopState.None) player.loopState = MprisLoopState.Playlist
+    else if (player.loopState === MprisLoopState.Playlist) player.loopState = MprisLoopState.Track
+    else player.loopState = MprisLoopState.None
+  }
+
+  function loopLabel(state) {
+    if (state === MprisLoopState.Track) return "one"
+    if (state === MprisLoopState.Playlist) return "all"
+    return "off"
+  }
+
   // Focus the running player over MPRIS when it is there; otherwise start it.
   function launch() {
     if (running && player.canRaise) player.raise()
@@ -155,6 +180,18 @@ BarWidget {
       return root.running ? "ok" : "not running"
     }
 
+    function shuffle(): string {
+      root.toggleShuffle()
+      if (!root.running) return "not running"
+      return root.shuffleSupported ? "ok" : "not supported"
+    }
+
+    function loop(): string {
+      root.cycleLoop()
+      if (!root.running) return "not running"
+      return root.loopSupported ? "ok" : "not supported"
+    }
+
     function launch(): string {
       root.launch()
       return "ok"
@@ -164,6 +201,8 @@ BarWidget {
       return JSON.stringify({
         running: root.running,
         playing: root.playing,
+        shuffle: root.shuffle,
+        loop: root.loopLabel(root.loopState),
         title: root.title,
         artist: root.artist,
         album: root.album,
@@ -172,6 +211,32 @@ BarWidget {
         length: root.trackLength,
         canSeek: root.canSeek
       })
+    }
+  }
+
+  // Secondary transport toggles, shuffle and repeat, laid out like Spotify's
+  // own: a plain glyph that turns accent-colored and grows a dot underneath
+  // while the mode is on. Off sits a step dimmer than the transport buttons so
+  // the row still reads as one group.
+  component ModeButton: Button {
+    id: mode
+    property bool on: false
+    foreground: on ? root.accentColor : Qt.darker(root.bar.foreground, 1.35)
+    horizontalPadding: Style.spacing.controlPaddingX
+    verticalPadding: Style.spacing.controlPaddingY
+    opacity: enabled ? 1.0 : 0.4
+
+    Behavior on foreground { ColorAnimation { duration: 120 } }
+
+    Rectangle {
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: Style.space(2)
+      width: Style.space(3)
+      height: width
+      radius: width / 2
+      color: root.accentColor
+      visible: mode.on
     }
   }
 
@@ -412,6 +477,14 @@ BarWidget {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: Style.space(6)
 
+        ModeButton {
+          iconText: "󰒝"
+          on: root.shuffle
+          enabled: root.shuffleSupported
+          tooltipText: root.shuffle ? "Shuffle on" : "Shuffle off"
+          onClicked: root.toggleShuffle()
+        }
+
         Button {
           iconText: "󰒮"
           foreground: root.bar.foreground
@@ -441,6 +514,14 @@ BarWidget {
           enabled: root.running && root.player.canGoNext
           opacity: enabled ? 1.0 : 0.4
           onClicked: root.nextTrack()
+        }
+
+        ModeButton {
+          iconText: root.loopState === MprisLoopState.Track ? "󰑘" : "󰑖"
+          on: root.loopState !== MprisLoopState.None
+          enabled: root.loopSupported
+          tooltipText: "Repeat " + root.loopLabel(root.loopState)
+          onClicked: root.cycleLoop()
         }
       }
     }

@@ -3,7 +3,8 @@
 A Spotify-only bar widget for the [Omarchy 4](https://omarchy.org) shell. The bar
 shows a single Spotify glyph that dims while Spotify is closed and lights up in
 the theme accent color while it is playing. Clicking it opens a flyout panel with
-album art, track info, a seek bar, and transport controls.
+album art, track info, a seek bar, transport controls, and shuffle / repeat
+toggles.
 
 ![The bar glyph and the flyout panel: play/pause, seek, and skip](docs/demo.gif)
 
@@ -91,8 +92,10 @@ omarchy-shell byj.spotify close
 omarchy-shell byj.spotify playPause
 omarchy-shell byj.spotify next
 omarchy-shell byj.spotify previous
+omarchy-shell byj.spotify shuffle      # toggle shuffle
+omarchy-shell byj.spotify loop         # cycle repeat: off → all → one
 omarchy-shell byj.spotify launch       # focus Spotify, or start it when closed
-omarchy-shell byj.spotify status       # JSON: running, playing, track, position
+omarchy-shell byj.spotify status       # JSON: running, playing, shuffle, loop, track, position
 ```
 
 Hyprland keybinding:
