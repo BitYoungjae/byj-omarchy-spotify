@@ -6,7 +6,7 @@ the theme accent color while it is playing. Clicking it opens a flyout panel wit
 album art, track info, a seek bar, transport controls, and shuffle / repeat
 toggles.
 
-![The bar glyph and the flyout panel: play/pause, seek, and skip](docs/demo.gif)
+![The bar glyph and the flyout panel: play/pause, seek, skip, and the shuffle / repeat toggles](docs/demo.gif)
 
 Inspired by [garak](https://github.com/BitYoungjae/garak), rewritten as a native
 `omarchy-shell` plugin so it lives inside the running shell instead of spawning a
