@@ -241,9 +241,14 @@ BarWidget {
           }
 
           Item {
+            id: artClip
             anchors.fill: parent
             anchors.margins: artFrame.borderTop
-            visible: root.artUrl !== "" && popup.visible
+            // Kept as a named flag because the skeleton's animation gates on
+            // it: reading Item.visible there loops, since it reflects the
+            // parent chain's effective visibility as it propagates.
+            readonly property bool shown: root.artUrl !== "" && popup.visible
+            visible: shown
             layer.enabled: true
             layer.smooth: true
             layer.effect: MultiEffect {
@@ -253,7 +258,40 @@ BarWidget {
               maskSpreadAtMin: 0.3
             }
 
+            // Skeleton: a soft band sweeping diagonally across the frame while
+            // the art is still in flight, so a cold open reads as "loading"
+            // rather than an empty box. Cached art comes back Ready at once and
+            // never shows it, and the sweep only runs while it is on screen.
+            Item {
+              id: skeleton
+              anchors.fill: parent
+              readonly property bool active: artClip.shown && (art.status === Image.Loading || art.status === Image.Null)
+              visible: active
+
+              Rectangle {
+                id: shimmer
+                width: parent.width * 0.55
+                height: parent.height * 2
+                anchors.verticalCenter: parent.verticalCenter
+                rotation: 20
+                gradient: Gradient {
+                  orientation: Gradient.Horizontal
+                  GradientStop { position: 0.0; color: "transparent" }
+                  GradientStop { position: 0.5; color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.16) }
+                  GradientStop { position: 1.0; color: "transparent" }
+                }
+
+                SequentialAnimation on x {
+                  running: skeleton.active
+                  loops: Animation.Infinite
+                  NumberAnimation { from: -shimmer.width; to: skeleton.width; duration: 1100; easing.type: Easing.InOutSine }
+                  PauseAnimation { duration: 250 }
+                }
+              }
+            }
+
             Image {
+              id: art
               anchors.fill: parent
               // Spotify serves art over HTTPS, and Qt fetches it on the pixmap
               // reader thread. Only ask for it while the card is actually on
@@ -266,12 +304,16 @@ BarWidget {
               smooth: true
               sourceSize.width: artFrame.width * 2
               sourceSize.height: artFrame.height * 2
+              opacity: status === Image.Ready ? 1 : 0
+              Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
             }
           }
 
+          // No art at all, or Spotify handed us a URL that will not load: fall
+          // back to the glyph instead of leaving the skeleton sweeping forever.
           Text {
             anchors.centerIn: parent
-            visible: root.artUrl === ""
+            visible: root.artUrl === "" || art.status === Image.Error
             text: ""
             color: Qt.darker(root.bar.foreground, 1.5)
             font.family: root.bar.fontFamily
